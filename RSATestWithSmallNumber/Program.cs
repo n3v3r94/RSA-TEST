@@ -10,11 +10,11 @@ namespace RSATestWithSmallNumber
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-            
+            Random rnd = new Random();
             for (int k  = 0; k < 1; k++)
             {
-                Console.WriteLine("Please enter length of prime number 5 - 14");
-                int lenght = int.Parse(Console.ReadLine());
+                Console.WriteLine("Please enter length of prime number 3 - 12");
+                int lenght =  int.Parse(Console.ReadLine()); /*rnd.Next(3, 13);*/
 
                 BigInteger p1 = GeneratePrimeNumber(lenght);
                 BigInteger p2 = GeneratePrimeNumber(lenght);
@@ -26,7 +26,7 @@ namespace RSATestWithSmallNumber
                 Console.WriteLine($"Phi: {phiN} -> length {phiN.ToString().Length}");
 
 
-                BigInteger e = GeneratePublicExponentE(9, phiN);
+                BigInteger e = GeneratePublicExponentE(lenght, phiN);
                 Console.WriteLine($"e= {e}");
 
 
@@ -43,7 +43,7 @@ namespace RSATestWithSmallNumber
                     Console.WriteLine("Sorry try again. n must must be biggest from e"); 
                 }
 
-                string messages = Console.ReadLine();
+                string messages = Console.ReadLine(); /*"CRYPTED";*/
 
                 byte[] messagesInBytes = Encoding.UTF8.GetBytes(messages);
 
@@ -100,11 +100,11 @@ namespace RSATestWithSmallNumber
             return num1;
         }
 
-        public static BigInteger GeneratePrimeNumber(int lenght)
+        public static BigInteger GeneratePrimeNumber(int length)
         {
             Random rnd = new Random();
-            BigInteger p = BigInteger.Parse(StartNumber(lenght));
-            string lenghtNumbers = StartNumberMax(lenght);
+            BigInteger p = BigInteger.Parse(StartNumber(length));
+            string lenghtNumbers = StartNumberMax(length);
             BigInteger test = BigInteger.Parse(lenghtNumbers);
 
             for (int i = 2; i < p; i++)
@@ -117,7 +117,7 @@ namespace RSATestWithSmallNumber
 
                 if (test<int.MaxValue)
                 {
-                    p += rnd.Next(1, int.Parse(StartNumberMax(lenght)));
+                    p += rnd.Next(1, int.Parse(StartNumberMax(length)));
                 }
 
                 if (IsPrime(p))
@@ -135,9 +135,23 @@ namespace RSATestWithSmallNumber
         {
             BigInteger e = BigInteger.Parse(StartNumber(length));
             Random rnd = new Random();
+            string lenghtNumbers = StartNumberMax(length);
+            BigInteger test = BigInteger.Parse(lenghtNumbers);
             for (BigInteger i = e; i < PhiN; i++)
             {
-                i += rnd.Next(1, 1000);
+
+                if (test > int.MaxValue)
+                {
+                    i += rnd.Next(1, int.MaxValue);
+                }
+
+                if (test < int.MaxValue)
+                {
+                    i += rnd.Next(1, int.Parse(StartNumberMax(length)));
+                }
+
+                //i += rnd.Next(1, 1000);
+
                 if (!(i.IsEven) && (GCD(i, PhiN) == 1))
                 {
                     e = i;
